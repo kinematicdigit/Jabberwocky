@@ -1,0 +1,167 @@
+# Jabberwocky-toolhead---Mellow-flySht36V3-V3max-remap
+Translates the Nitehawk-36 can board to the mellow SHT-36 can board.
+
+Wiring pin mapping cheat sheet
+
+```
+#pin mapping ref
+#####################################################################
+# HEATER SYSTEM
+# GPIO23 - Hotend heater
+# GPIO27 - Thermistor
+#####################################################################
+
+#####################################################################
+# FANS
+# GPIO21 - Hotend fan
+# GPIO13 - Part cooling
+#####################################################################
+
+#####################################################################
+# SENSORS
+# GPIO22 - X endstop
+# GPIO16 - Bottom filament sensor
+# GPIO20 - Top filament sensor
+#####################################################################
+
+#####################################################################
+#LEDS
+# GPIO26 - RGBLED
+#####################################################################
+```
+
+
+Jabberwocky toolhead Mellow fly SHTV3/V3 MAX
+
+```
+#####################################################################
+#      Mellow board pin mapping
+#####################################################################
+# I recommend making a separate .cfg file and just include it into the main printer.cfg and name it "sht36v3.cfg then include it as "[include sht36v3.cfg]" for easier pin remap 
+
+[mcu SHT36]
+canbus_uuid: ecf7194ee385
+
+[board_pins SHT36]
+mcu: SHT36
+aliases:
+aliases_2209:
+    EXT_EN=gpio14,EXT_STEP=gpio7,EXT_DIR=gpio6,EXT_UART=gpio15,EXT_DIAG=
+aliases_endstop:
+    LIMIT_0=gpio22,LIMIT_1=gpio24
+aliases_fsensor: 
+    tfsensor=gpio16,bfsensor=gpio20
+aliases_cnc_fans:
+    FAN0=gpio13,FAN1=gpio21
+aliases_thermistors:
+    TH0=gpio27,PT100=gpio17,TC0=
+aliases_heaters:
+    HE0=gpio23
+aliases_rgb:
+    RGBLED=gpio26
+aliases_lis2dw:
+    LIS2DW=gpio12
+aliases_spi:
+    MOSI=gpio3,MISO=gpio4,SCK=gpio2
+
+[temperature_sensor SHT36]
+sensor_type: temperature_mcu
+sensor_mcu: SHT36
+
+[lis2dw]
+cs_pin: SHT36:LIS2DW
+spi_software_sclk_pin: SHT36:SCK
+spi_software_mosi_pin: SHT36:MOSI
+spi_software_miso_pin: SHT36:MISO
+
+
+#####################################################################
+#      MMU pre and post extruder sensors
+#####################################################################
+
+extruder_switch_pin: ^SHT36:gpio20  #top
+toolhead_switch_pin: SHT36:gpio16  #bottoom
+
+#####################################################################
+#      Temperature monitoring
+#####################################################################
+
+[temperature_sensor SHT36]
+sensor_type: temperature_mcu
+sensor_mcu: SHT36
+
+[lis2dw]
+cs_pin: SHT36:gpio12
+
+
+#####################################################################
+#   Extruder
+#####################################################################
+
+[extruder]
+step_pin: SHT36:gpio7
+dir_pin: SHT36:gpio6
+enable_pin: !SHT36:gpio14
+microsteps: 16
+rotation_distance: 35.2												#Be sure to calibrate
+gear_ratio: 44:8, 25:17
+nozzle_diameter: 0.400
+filament_diameter: 1.750
+heater_pin: SHT36:gpio23
+sensor_type: ATC Semitec 104GT-2
+sensor_pin: SHT36:gpio27
+#pullup_resistor: 2200
+#control: pid                                                        # Do PID calibration after initial checks
+#pid_Kp: 28.182
+#pid_Ki: 1.978
+#pid_Kd: 100.397
+min_temp: 0
+max_temp: 315
+min_extrude_temp: 170
+max_extrude_only_distance: 1000                                     
+max_extrude_cross_section: 30                                       
+pressure_advance: 0.052                                             #Be sure to calibrate
+pressure_advance_smooth_time: 0.040
+
+[tmc2209 extruder]
+uart_pin: SHT36:gpio15
+interpolate: false
+run_current: 0.65     #.55 minimum DO NOT EXCEED .7A as it will cause excess heat.
+sense_resistor: 0.100
+stealthchop_threshold: 0                  
+
+#####################################################################
+#   Fans
+#####################################################################
+## PCF
+[fan]
+pin: SHT36:gpio13
+kick_start_time: .3
+off_below: 0.1
+
+
+## HEF
+[heater_fan hotend_fan]
+pin: SHT36:gpio21
+max_power: 1.0
+kick_start_time: .1
+heater: extruder
+heater_temp: 50.0
+fan_speed: .6
+
+#####################################################################
+#   Resonance testing
+#####################################################################
+
+[resonance_tester]
+accel_chip: lis2dw
+probe_points: 127, 127, 40
+min_freq: 5
+max_freq: 133
+accel_per_hz: 75
+hz_per_sec: 1
+
+
+```
+
+As of now I am waiting on a new x carriage for my setup so if you are using the included eddy probe with the mellow can I would recomend using the standard carto/beacon probe and on the slicer scale it only in the z axis to 109% it gets the probe into the sweet spot that mellow recomends. Happy printing!
