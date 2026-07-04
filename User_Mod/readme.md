@@ -19,3 +19,4 @@ Directory and description:
 - Sjack1209 - JW Stealthchanger NH36 Mount
 - LAYERCORE3D - Cable Management, SOVOL08 Support, and more
 - sidjdosjsid - Mandella Rose Works - Trident Belt Tensioner Adapter
+- Alfcod521 - Translates the Nitehawk-36 can board to the mellow SHT-36 can board.
